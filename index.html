@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
+</head>
+<body>
+    <div id="game-container"></div>
+    <script>
+        const config = {
+            type: Phaser.AUTO,
+            width: 800,
+            height: 600,
+            physics: { default: 'arcade', arcade: { gravity: { y: 0 } } },
+            scene: { preload: preload, create: create, update: update }
+        };
+
+        const game = new Phaser.Game(config);
+        let player, cursors, music;
+
+        function preload() {
+            // Placeholder images
+            this.load.image('tiles', 'https://labs.phaser.io/assets/tilemaps/tiles/catastrophi_tiles_16.png');
+            this.load.spritesheet('player', 'https://labs.phaser.io/assets/sprites/dude.png', { frameWidth: 32, frameHeight: 48 });
+            // YOU WILL PUT GOSPEL ARTIST SONG URLS HERE
+            this.load.audio('gospelSong', 'YOUR_SONG_LINK_HERE.mp3');
+        }
+
+        function create() {
+            player = this.physics.add.sprite(400, 300, 'player');
+            cursors = this.input.keyboard.createCursorKeys();
+            
+            // Interaction: Press SPACE to play the latest Gospel release
+            this.input.keyboard.on('keydown-SPACE', () => {
+                if (!music) {
+                    music = this.sound.add('gospelSong');
+                    music.play();
+                    alert("Now Playing: New Release from [Artist Name]");
+                }
+            });
+        }
+
+        function update() {
+            player.setVelocity(0);
+            if (cursors.left.isDown) player.setVelocityX(-160);
+            else if (cursors.right.isDown) player.setVelocityX(160);
+            if (cursors.up.isDown) player.setVelocityY(-160);
+            else if (cursors.down.isDown) player.setVelocityY(160);
+        }
+    </script>
+</body>
+  </html>
