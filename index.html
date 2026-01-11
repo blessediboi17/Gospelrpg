@@ -1,51 +1,85 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Gospel RPG Hub</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
+    <style> body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; } </style>
 </head>
 <body>
-    <div id="game-container"></div>
     <script>
-        const config = {
-            type: Phaser.AUTO,
-            width: 800,
-            height: 600,
-            physics: { default: 'arcade', arcade: { gravity: { y: 0 } } },
-            scene: { preload: preload, create: create, update: update }
-        };
+    const config = {
+        type: Phaser.AUTO,
+        width: 800,
+        height: 600,
+        physics: { default: 'arcade', arcade: { gravity: { y: 0 } } },
+        scene: { preload: preload, create: create, update: update }
+    };
 
-        const game = new Phaser.Game(config);
-        let player, cursors, music;
+    const game = new Phaser.Game(config);
+    let player;
+    let cursors;
 
-        function preload() {
-            // Placeholder images
-            this.load.image('tiles', 'https://labs.phaser.io/assets/tilemaps/tiles/catastrophi_tiles_16.png');
-            this.load.spritesheet('player', 'https://labs.phaser.io/assets/sprites/dude.png', { frameWidth: 32, frameHeight: 48 });
-            // YOU WILL PUT GOSPEL ARTIST SONG URLS HERE
-            this.load.audio('gospelSong', 'YOUR_SONG_LINK_HERE.mp3');
+    function preload() {
+        // These are guaranteed working images from the Phaser website
+        this.load.image('sky', 'https://labs.phaser.io/assets/skies/space3.png');
+        this.load.spritesheet('dude', 'https://labs.phaser.io/assets/sprites/dude.png', { frameWidth: 32, frameHeight: 48 });
+    }
+
+    function create() {
+        // Background
+        this.add.image(400, 300, 'sky');
+
+        // The Player
+        player = this.physics.add.sprite(400, 300, 'dude');
+        player.setCollideWorldBounds(true);
+
+        // Movement animations
+        this.anims.create({
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'turn',
+            frames: [ { key: 'dude', frame: 4 } ],
+            frameRate: 20
+        });
+
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        cursors = this.input.keyboard.createCursorKeys();
+
+        // Screen text instructions
+        this.add.text(10, 10, 'Use Arrows to Move | GOSPEL RPG ALPHA', { font: '20px Arial', fill: '#ffffff' });
+    }
+
+    function update() {
+        if (cursors.left.isDown) {
+            player.setVelocityX(-160);
+            player.anims.play('left', true);
+        } else if (cursors.right.isDown) {
+            player.setVelocityX(160);
+            player.anims.play('right', true);
+        } else {
+            player.setVelocityX(0);
+            player.anims.play('turn');
         }
 
-        function create() {
-            player = this.physics.add.sprite(400, 300, 'player');
-            cursors = this.input.keyboard.createCursorKeys();
-            
-            // Interaction: Press SPACE to play the latest Gospel release
-            this.input.keyboard.on('keydown-SPACE', () => {
-                if (!music) {
-                    music = this.sound.add('gospelSong');
-                    music.play();
-                    alert("Now Playing: New Release from [Artist Name]");
-                }
-            });
+        if (cursors.up.isDown) {
+            player.setVelocityY(-160);
+        } else if (cursors.down.isDown) {
+            player.setVelocityY(160);
+        } else {
+            player.setVelocityY(0);
         }
-
-        function update() {
-            player.setVelocity(0);
-            if (cursors.left.isDown) player.setVelocityX(-160);
-            else if (cursors.right.isDown) player.setVelocityX(160);
-            if (cursors.up.isDown) player.setVelocityY(-160);
-            else if (cursors.down.isDown) player.setVelocityY(160);
-        }
+    }
     </script>
 </body>
-  </html>
+    </html>
